@@ -60,7 +60,8 @@ class IpmrmtImpl {
     throw UnimplementedError("hostStopSystemKeyPropagate");
   }
 
-  int peerGetDefaultSessionsCount({required String id, dynamic hint}) {
+  int peerGetSessionsCount(
+      {required String id, required int connType, dynamic hint}) {
     return 0;
   }
 
@@ -68,6 +69,7 @@ class IpmrmtImpl {
       {required String id,
       required UuidValue sessionId,
       required Int32List displays,
+      required bool isViewCamera,
       dynamic hint}) {
     return '';
   }
@@ -76,6 +78,7 @@ class IpmrmtImpl {
       {required UuidValue sessionId,
       required String id,
       required bool isFileTransfer,
+      required bool isViewCamera,
       required bool isPortForward,
       required bool isRdp,
       required String switchUuid,
@@ -90,7 +93,8 @@ class IpmrmtImpl {
         'id': id,
         'password': password,
         'is_shared_password': isSharedPassword,
-        'isFileTransfer': isFileTransfer
+        'isFileTransfer': isFileTransfer,
+        'isViewCamera': isViewCamera
       })
     ]);
   }
