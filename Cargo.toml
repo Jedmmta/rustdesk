@@ -199,6 +199,7 @@ os-version = "0.2"
 
 [dev-dependencies]
 hound = "3.5"
+docopt = "1.1"
 
 [package.metadata.bundle]
 name = "IPMRmt"
