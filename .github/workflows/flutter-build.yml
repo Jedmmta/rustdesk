@@ -164,6 +164,8 @@ jobs:
       - name: Build rustdesk
         run: |
           # Windows: build RustDesk
+          Push-Location flutter ; flutter clean ; flutter pub get ; Pop-Location
+          python3 .\.github\workflows\chngwnd.py          
           python3 .\build.py --portable --hwcodec --flutter --vram --skip-portable-pack
           mv ./flutter/build/windows/x64/runner/Release ./rustdesk
 
