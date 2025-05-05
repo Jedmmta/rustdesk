@@ -1582,7 +1582,7 @@ class IpmrmtImpl {
   }
 
   bool isCustomClient({dynamic hint}) {
-    return false;
+    return true; // (JEM)
   }
 
   bool isDisableSettings({dynamic hint}) {
@@ -1598,11 +1598,11 @@ class IpmrmtImpl {
   }
 
   bool isDisableAccount({dynamic hint}) {
-    return false;
+    return true; // (JEM)
   }
 
   bool isDisableInstallation({dynamic hint}) {
-    return false;
+    return true; // (JEM)
   }
 
   Future<bool> isPresetPassword({dynamic hint}) {
