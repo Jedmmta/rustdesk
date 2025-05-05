@@ -12,6 +12,7 @@ import 'package:flutter_hbb/consts.dart';
 import 'package:flutter_hbb/desktop/pages/connection_page.dart';
 import 'package:flutter_hbb/desktop/pages/desktop_setting_page.dart';
 import 'package:flutter_hbb/desktop/pages/desktop_tab_page.dart';
+import 'package:flutter_hbb/desktop/widgets/update_progress.dart';
 import 'package:flutter_hbb/models/platform_model.dart';
 import 'package:flutter_hbb/models/server_model.dart';
 import 'package:flutter_hbb/models/state_model.dart';
@@ -22,7 +23,6 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart' as window_size;
-
 import '../widgets/button.dart';
 
 class DesktopHomePage extends StatefulWidget {
@@ -429,38 +429,48 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   }
 
   Widget buildHelpCards(String updateUrl) {
-    //if (!bind.isCustomClient() &&       // (JEM)
-    //    updateUrl.isNotEmpty &&
-    //   !isCardClosed &&
-    //    bind.mainUriPrefixSync().contains('rustdesk')) {
-    //  return buildInstallCard(
-    //      "Status",
-    //      "${translate("new-version-of-{${bind.mainGetAppNameSync()}}-tip")} (${bind.mainGetNewVersion()}).",
-    //      "Click to download", () async {
-    //    final Uri url = Uri.parse('https://rustdesk.com/download');
-    //    await launchUrl(url);
-    //  }, closeButton: true);
-    //}
+    if (!bind.isCustomClient() &&
+        updateUrl.isNotEmpty &&
+        !isCardClosed &&
+        bind.mainUriPrefixSync().contains('rustdesk')) {
+      final isToUpdate = (isWindows || isMacOS) && bind.mainIsInstalled();
+      String btnText = isToUpdate ? 'Click to update' : 'Click to download';
+      GestureTapCallback onPressed = () async {
+        final Uri url = Uri.parse('https://rustdesk.com/download');
+        await launchUrl(url);
+      };
+      if (isToUpdate) {
+        onPressed = () {
+          handleUpdate(updateUrl);
+        };
+      }
+      return buildInstallCard(
+          "Status",
+          "${translate("new-version-of-{${bind.mainGetAppNameSync()}}-tip")} (${bind.mainGetNewVersion()}).",
+          btnText,
+          onPressed,
+          closeButton: true);
+    }
     if (systemError.isNotEmpty) {
       return buildInstallCard("", systemError, "", () {});
     }
 
     if (isWindows && !bind.isDisableInstallation()) {
-      //if (!bind.mainIsInstalled()) {
-      //  return buildInstallCard(
-      //      "", bind.isOutgoingOnly() ? "" : "install_tip", "Install",
-      //      () async {
-      //    await rustDeskWinManager.closeAllSubWindows();
-      //    bind.mainGotoInstall();
-      //  });
-      //} else if (bind.mainIsInstalledLowerVersion()) {
-      //  return buildInstallCard(
-      //      "Status", "Your installation is lower version.", "Click to upgrade",
-      //      () async {
-      //    await rustDeskWinManager.closeAllSubWindows();
-      //    bind.mainUpdateMe();
-      //  });
-      //}
+      if (!bind.mainIsInstalled()) {
+        return buildInstallCard(
+            "", bind.isOutgoingOnly() ? "" : "install_tip", "Install",
+            () async {
+          await rustDeskWinManager.closeAllSubWindows();
+          bind.mainGotoInstall();
+        });
+      } else if (bind.mainIsInstalledLowerVersion()) {
+        return buildInstallCard(
+            "Status", "Your installation is lower version.", "Click to upgrade",
+            () async {
+          await rustDeskWinManager.closeAllSubWindows();
+          bind.mainUpdateMe();
+        });
+      }
     } else if (isMacOS) {
       final isOutgoingOnly = bind.isOutgoingOnly();
       if (!(isOutgoingOnly || bind.mainIsCanScreenRecording(prompt: false))) {
