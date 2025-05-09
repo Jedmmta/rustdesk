@@ -692,11 +692,11 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("{} Update", ""),
         ("{}-to-update-tip", ""),
         ("download-new-version-failed-tip", ""),
-        ("Auto update", ""),
+        ("Auto update", "Auto atualizar"),
         ("update-failed-check-msi-tip", ""),
-        ("websocket_tip", ""),
-        ("Use WebSocket", ""),
-        ("Trackpad speed", ""),
-        ("Default trackpad speed", ""),
+        ("websocket_tip", "Ao usar o WebSocket, somente conexões de retransmissão são suportadas."),
+        ("Use WebSocket", "Usar WebSocket"),
+        ("Trackpad speed", "Velocidade do trackpad"),
+        ("Default trackpad speed", "Velocidade padrão do trackpad"),
     ].iter().cloned().collect();
 }
