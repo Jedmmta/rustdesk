@@ -1405,7 +1405,7 @@ impl Connection {
         }
         #[cfg(not(any(target_os = "android", target_os = "ios")))]
         if self.file_transfer.is_some() {
-            if crate::platform::is_prelogin() || self.tx_to_cm.send(ipc::Data::Test).is_err() {
+            if crate::platform::is_prelogin() { // }|| self.tx_to_cm.send(ipc::Data::Test).is_err() {
                 username = "".to_owned();
             }
         }
@@ -3119,10 +3119,18 @@ impl Connection {
                     if virtual_display_manager::amyuni_idd::is_my_display(&name) {
                         record_changed = false;
                     }
+                    #[cfg(not(target_os = "macos"))]
+                    let scale = 1.0;
+                    #[cfg(target_os = "macos")]
+                    let scale = display.scale();
+                    let original = (
+                        ((display.width() as f64) / scale).round() as _,
+                        (display.height() as f64 / scale).round() as _,
+                    );
                     if record_changed {
                         display_service::set_last_changed_resolution(
                             &name,
-                            (display.width() as _, display.height() as _),
+                            original,
                             (r.width, r.height),
                         );
                     }
@@ -4454,7 +4462,7 @@ mod raii {
                     *WALLPAPER_REMOVER.lock().unwrap() = None;
                 }
                 #[cfg(not(any(target_os = "android", target_os = "ios")))]
-                display_service::reset_resolutions();
+                display_service::restore_resolutions();
                 #[cfg(windows)]
                 let _ = virtual_display_manager::reset_all();
                 #[cfg(target_os = "linux")]
